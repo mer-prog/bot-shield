@@ -107,7 +107,7 @@ export function BotDashboard() {
           <span className="flex items-center gap-1.5 rounded-full border border-slate-700/50 bg-slate-800/50 px-2.5 py-0.5">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
             <span className="text-[10px] font-mono text-slate-500 uppercase">
-              Live
+              {t('dashboard.live' as never)}
             </span>
           </span>
         </div>

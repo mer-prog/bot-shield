@@ -24,7 +24,7 @@ function StockBadge({ stock, locale }: { stock: number; locale: 'ja' | 'en' }) {
 }
 
 export default function Home() {
-  const { locale, t } = useLocale();
+  const { locale, t, tf } = useLocale();
   const products = getLocalizedProducts(locale);
 
   return (
@@ -105,7 +105,7 @@ export default function Home() {
             </p>
           </div>
           <span className="rounded-lg border border-slate-700/50 bg-slate-800/40 px-3 py-1 text-xs font-mono text-slate-500">
-            {products.length} items
+            {tf('products.count' as never)(products.length as never)}
           </span>
         </div>
 

@@ -5,7 +5,6 @@ import {
   useContext,
   useState,
   useCallback,
-  useEffect,
   type ReactNode,
 } from 'react';
 import type { Locale, TranslationKey } from './i18n';
@@ -31,11 +30,7 @@ function getInitialLocale(): Locale {
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('ja');
-
-  useEffect(() => {
-    setLocaleState(getInitialLocale());
-  }, []);
+  const [locale, setLocaleState] = useState<Locale>(getInitialLocale);
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);

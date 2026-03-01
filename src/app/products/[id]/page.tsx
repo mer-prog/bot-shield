@@ -327,7 +327,7 @@ export default function ProductPage() {
             <div className="mt-6 rounded-xl border border-slate-700/30 bg-slate-900/50 p-5">
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-sm font-medium text-slate-300">
-                  Risk Score
+                  {t('result.riskScore' as never)}
                 </span>
                 <span className={`text-2xl font-bold font-mono ${display.accent}`}>
                   {result.risk_score}
@@ -354,13 +354,13 @@ export default function ProductPage() {
             {/* Metadata */}
             <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-500">
               <span className="rounded-lg bg-slate-800/40 px-2.5 py-1 font-mono">
-                Event: {result.event_id.slice(0, 8)}...
+                {t('result.event' as never)}: {result.event_id.slice(0, 8)}...
               </span>
               <span className="rounded-lg bg-slate-800/40 px-2.5 py-1 font-mono uppercase">
-                Action: {result.action}
+                {t('result.action' as never)}: {result.action}
               </span>
               <span className="rounded-lg bg-slate-800/40 px-2.5 py-1 font-mono uppercase">
-                Level: {result.risk_level}
+                {t('result.level' as never)}: {result.risk_level}
               </span>
             </div>
           </div>

@@ -61,7 +61,7 @@ interface EventsTableProps {
 // ---------------------------------------------------------------------------
 
 export function EventsTable({ events }: EventsTableProps) {
-  const { locale, t } = useLocale();
+  const { locale, t, tf } = useLocale();
 
   return (
     <div className="rounded-2xl border border-slate-800/60 bg-slate-900/50 p-5">
@@ -70,7 +70,7 @@ export function EventsTable({ events }: EventsTableProps) {
           {t('events.title' as never)}
         </h3>
         <span className="text-[10px] font-mono uppercase tracking-wider text-slate-600">
-          Last {events.length}
+          {tf('events.last' as never)(events.length as never)}
         </span>
       </div>
 

@@ -72,24 +72,40 @@ const translations = {
 
     // Dashboard
     'dashboard.title': 'Security Operations Center',
-    'dashboard.updated': (time: string) => `Updated ${time}`,
-    'dashboard.noEvents': 'No events recorded yet',
+    'dashboard.updated': (time: string) => `更新 ${time}`,
+    'dashboard.noEvents': 'イベントはまだ記録されていません',
+    'dashboard.live': 'Live',
 
     // Stats cards
-    'stats.totalEvents': 'Total Events (24h)',
-    'stats.blocked': 'Blocked',
-    'stats.blockRate': 'Block Rate',
-    'stats.avgScore': 'Avg Risk Score',
+    'stats.totalEvents': '合計イベント (24h)',
+    'stats.blocked': 'ブロック',
+    'stats.blockRate': 'ブロック率',
+    'stats.avgScore': '平均リスクスコア',
+
+    // Charts
+    'chart.threatTimeline': '脅威タイムライン',
+    'chart.hourly': '1時間ごと',
+    'chart.riskDistribution': 'リスク分布',
+    'chart.events': 'イベント',
 
     // Events table
-    'events.title': 'Recent Events',
-    'events.last': (n: number) => `Last ${n}`,
-    'events.time': 'Time',
-    'events.ip': 'IP Address',
-    'events.path': 'Path',
-    'events.score': 'Score',
-    'events.level': 'Level',
-    'events.action': 'Action',
+    'events.title': '最近のイベント',
+    'events.last': (n: number) => `直近 ${n} 件`,
+    'events.time': '時刻',
+    'events.ip': 'IPアドレス',
+    'events.path': 'パス',
+    'events.score': 'スコア',
+    'events.level': 'レベル',
+    'events.action': 'アクション',
+
+    // Product result
+    'result.riskScore': 'リスクスコア',
+    'result.event': 'イベント',
+    'result.action': 'アクション',
+    'result.level': 'レベル',
+
+    // Products count
+    'products.count': (n: number) => `${n} 件`,
 
     // Language switcher
     'lang.switch': 'EN',
@@ -169,12 +185,19 @@ const translations = {
     'dashboard.title': 'Security Operations Center',
     'dashboard.updated': (time: string) => `Updated ${time}`,
     'dashboard.noEvents': 'No events recorded yet',
+    'dashboard.live': 'Live',
 
     // Stats cards
     'stats.totalEvents': 'Total Events (24h)',
     'stats.blocked': 'Blocked',
     'stats.blockRate': 'Block Rate',
     'stats.avgScore': 'Avg Risk Score',
+
+    // Charts
+    'chart.threatTimeline': 'Threat Timeline',
+    'chart.hourly': 'Hourly',
+    'chart.riskDistribution': 'Risk Distribution',
+    'chart.events': 'events',
 
     // Events table
     'events.title': 'Recent Events',
@@ -185,6 +208,15 @@ const translations = {
     'events.score': 'Score',
     'events.level': 'Level',
     'events.action': 'Action',
+
+    // Product result
+    'result.riskScore': 'Risk Score',
+    'result.event': 'Event',
+    'result.action': 'Action',
+    'result.level': 'Level',
+
+    // Products count
+    'products.count': (n: number) => `${n} items`,
 
     // Language switcher
     'lang.switch': 'JA',

@@ -175,6 +175,9 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
               </span>
               <button
                 onClick={toggleBotMode}
+                role="switch"
+                aria-checked={botMode}
+                aria-label="BOT Mode"
                 className="relative h-6 w-11 rounded-full transition-colors cursor-pointer"
                 style={{
                   backgroundColor: botMode

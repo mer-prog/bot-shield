@@ -138,7 +138,7 @@ export function useBotShield(): UseBotShieldReturn {
     lastKeyDownAt: 0,
     maxScrollDepth: 0,
     clicks: [],
-    mountedAt: Date.now(),
+    mountedAt: 0,
   });
 
   const botModeRef = useRef(false);

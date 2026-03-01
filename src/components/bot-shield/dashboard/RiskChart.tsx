@@ -17,6 +17,7 @@ import type {
   DashboardStats,
   TimeSeriesDataPoint,
 } from '@/lib/bot-shield/types';
+import { useLocale } from '@/lib/locale-context';
 
 interface TooltipEntry {
   dataKey?: string | number;
@@ -107,6 +108,7 @@ interface RiskChartProps {
 // ---------------------------------------------------------------------------
 
 export function RiskChart({ timeSeries, stats }: RiskChartProps) {
+  const { t } = useLocale();
   const pieData = [
     { name: 'Allowed', value: stats.allowedCount, color: COLORS.allowed },
     { name: 'Flagged', value: stats.flaggedCount, color: COLORS.flagged },
@@ -124,10 +126,10 @@ export function RiskChart({ timeSeries, stats }: RiskChartProps) {
       <div className="rounded-2xl border border-slate-800/60 bg-slate-900/50 p-5 lg:col-span-2">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-200">
-            Threat Timeline
+            {t('chart.threatTimeline' as never)}
           </h3>
           <span className="text-[10px] font-mono text-slate-600 uppercase">
-            Hourly
+            {t('chart.hourly' as never)}
           </span>
         </div>
         <div className="h-72">
@@ -218,7 +220,7 @@ export function RiskChart({ timeSeries, stats }: RiskChartProps) {
       <div className="rounded-2xl border border-slate-800/60 bg-slate-900/50 p-5">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-200">
-            Risk Distribution
+            {t('chart.riskDistribution' as never)}
           </h3>
         </div>
         <div className="relative h-72">
@@ -265,7 +267,7 @@ export function RiskChart({ timeSeries, stats }: RiskChartProps) {
                 {stats.totalEvents.toLocaleString()}
               </p>
               <p className="text-[10px] uppercase tracking-wider text-slate-500">
-                events
+                {t('chart.events' as never)}
               </p>
             </div>
           </div>

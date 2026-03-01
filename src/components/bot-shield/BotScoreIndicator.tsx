@@ -160,6 +160,9 @@ export function BotScoreIndicator() {
             <span className="text-xs text-slate-400">BOT Mode (Demo)</span>
             <button
               onClick={toggleBotMode}
+              role="switch"
+              aria-checked={botMode}
+              aria-label="BOT Mode"
               className="relative h-5 w-9 rounded-full transition-colors cursor-pointer"
               style={{
                 backgroundColor: botMode

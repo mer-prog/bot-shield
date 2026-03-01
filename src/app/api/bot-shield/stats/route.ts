@@ -188,8 +188,8 @@ export async function GET(request: NextRequest) {
   const blockRate =
     stats.totalEvents > 0 ? stats.blockedCount / stats.totalEvents : 0;
 
-  const events = await getRecentEvents(20);
-  const recentEvents: EventSummary[] = events.map((e) => ({
+  const events = await getRecentEvents(100);
+  const recentEvents: EventSummary[] = events.slice(0, 20).map((e) => ({
     id: e.id,
     ipAddress: e.ipAddress,
     path: e.path,
@@ -199,11 +199,28 @@ export async function GET(request: NextRequest) {
     createdAt: e.createdAt.toISOString(),
   }));
 
+  // Compute top risk IPs from recent events
+  const ipAgg = new Map<string, { totalScore: number; count: number }>();
+  for (const e of events) {
+    const entry = ipAgg.get(e.ipAddress) ?? { totalScore: 0, count: 0 };
+    entry.totalScore += e.riskScore;
+    entry.count += 1;
+    ipAgg.set(e.ipAddress, entry);
+  }
+  const topRiskIps: TopRiskIp[] = Array.from(ipAgg.entries())
+    .map(([ip, { totalScore, count }]) => ({
+      ip,
+      eventCount: count,
+      avgRiskScore: Math.round(totalScore / count),
+    }))
+    .sort((a, b) => b.avgRiskScore - a.avgRiskScore)
+    .slice(0, 5);
+
   const response: StatsResponse = {
     stats,
     timeSeries,
     blockRate,
-    topRiskIps: [],
+    topRiskIps,
     recentEvents,
   };
 
