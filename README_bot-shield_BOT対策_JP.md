@@ -1,5 +1,9 @@
 # BOT Shield — EC向け多層BOT対策システム
 
+**[Live Demo](https://bot-shield-theta.vercel.app)** | **[English Version](./README_bot-shield_BOT対策_EN.md)** | **[README](./README.md)**
+
+---
+
 ## 習得スキル・学習キーワード
 
 Next.js 16 (App Router) / TypeScript / Tailwind CSS 4 / PostgreSQL / Cloudflare Turnstile / Recharts 3 / リアルタイム行動分析 / マウスエントロピー解析 / キーボードタイミング変動係数 / Sliding Window Rate Limiting / 5層防御アーキテクチャ / リスクスコアリングエンジン / SOCダッシュボード / Edge Middleware / IPブロックリスト（TTL対応）/ インメモリフォールバック / React Hooks設計パターン / Server Components / Client Components / JSONB GINインデックス

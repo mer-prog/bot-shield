@@ -1,5 +1,9 @@
 # BOT Shield — Multi-Layer Bot Defense System for E-Commerce
 
+**[Live Demo](https://bot-shield-theta.vercel.app)** | **[日本語版](./README_bot-shield_BOT対策_JP.md)** | **[README](./README.md)**
+
+---
+
 ## Skills & Keywords
 
 Next.js 16 (App Router) / TypeScript / Tailwind CSS 4 / PostgreSQL / Cloudflare Turnstile / Recharts 3 / Real-Time Behavioral Analysis / Mouse Movement Entropy / Keyboard Timing Coefficient of Variation / Sliding Window Rate Limiting / 5-Layer Defense Architecture / Risk Scoring Engine / SOC Dashboard / Edge Middleware / IP Blocklist (TTL-Based) / In-Memory Fallback / React Hooks Design Pattern / Server Components / Client Components / JSONB GIN Index
