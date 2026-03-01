@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
+import { LocaleProvider } from '@/lib/locale-context';
 import './globals.css';
 
 export const metadata: Metadata = {
   title: 'BOT Shield - Demo Store',
-  description: 'ECサイト向け多層BOT対策システム実証デモ',
+  description: 'Multi-layer bot defense system demo for e-commerce',
 };
 
 export default function RootLayout({
@@ -12,9 +13,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className="dark">
+    <html lang="ja" className="dark" suppressHydrationWarning>
       <body className="antialiased">
-        {children}
+        <LocaleProvider>{children}</LocaleProvider>
       </body>
     </html>
   );

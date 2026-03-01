@@ -1,12 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import { BotDashboard } from '@/components/bot-shield/dashboard/BotDashboard';
-
-export const metadata = {
-  title: 'Dashboard - BOT Shield',
-  description: 'BOT Shield Security Operations Center',
-};
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useLocale } from '@/lib/locale-context';
 
 export default function DashboardPage() {
+  const { t } = useLocale();
+
   return (
     <div className="min-h-screen bg-grid-pattern">
       {/* ─── Header ─── */}
@@ -18,16 +19,17 @@ export default function DashboardPage() {
               BOT Shield
             </span>
           </Link>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <Link
               href="/"
               className="text-sm font-medium text-slate-400 transition-colors hover:text-cyan-400"
             >
-              Store
+              {t('nav.store' as never)}
             </Link>
             <span className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-4 py-1.5 text-sm font-medium text-cyan-400">
-              Dashboard
+              {t('nav.dashboard' as never)}
             </span>
+            <LanguageSwitcher />
           </div>
         </nav>
       </header>

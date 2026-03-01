@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import type { DashboardStats, TimeSeriesDataPoint } from '@/lib/bot-shield/types';
 import type { EventSummary } from '@/app/api/bot-shield/stats/route';
+import { useLocale } from '@/lib/locale-context';
 import { StatsCards } from './StatsCards';
 import { RiskChart } from './RiskChart';
 import { EventsTable } from './EventsTable';
@@ -34,6 +35,7 @@ const REFRESH_INTERVAL_MS = 30_000;
 // ---------------------------------------------------------------------------
 
 export function BotDashboard() {
+  const { locale, t } = useLocale();
   const [data, setData] = useState<StatsData | null>(null);
   const [range, setRange] = useState<TimeRange>('24h');
   const [loading, setLoading] = useState(true);
@@ -92,13 +94,15 @@ export function BotDashboard() {
 
   if (!data) return null;
 
+  const timeLocale = locale === 'ja' ? 'ja-JP' : 'en-US';
+
   return (
     <div className="space-y-6">
       {/* ── Dashboard sub-header ── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <h2 className="text-xl font-bold text-slate-100">
-            Security Operations Center
+            {t('dashboard.title' as never)}
           </h2>
           <span className="flex items-center gap-1.5 rounded-full border border-slate-700/50 bg-slate-800/50 px-2.5 py-0.5">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
@@ -113,7 +117,7 @@ export function BotDashboard() {
           {lastUpdated && (
             <span className="text-[10px] font-mono text-slate-600">
               Updated{' '}
-              {lastUpdated.toLocaleTimeString('ja-JP', {
+              {lastUpdated.toLocaleTimeString(timeLocale, {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',

@@ -2,6 +2,7 @@
 
 import type { RiskLevel, ActionType } from '@/lib/bot-shield/types';
 import type { EventSummary } from '@/app/api/bot-shield/stats/route';
+import { useLocale } from '@/lib/locale-context';
 
 // ---------------------------------------------------------------------------
 // Level / Action badge styling
@@ -32,9 +33,9 @@ function getScoreColor(score: number): string {
   return SCORE_COLORS.find((c) => score <= c.max)?.color ?? '#ef4444';
 }
 
-function formatTimestamp(iso: string): string {
+function formatTimestamp(iso: string, locale: string): string {
   const d = new Date(iso);
-  return d.toLocaleTimeString('ja-JP', {
+  return d.toLocaleTimeString(locale === 'ja' ? 'ja-JP' : 'en-US', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
@@ -60,10 +61,14 @@ interface EventsTableProps {
 // ---------------------------------------------------------------------------
 
 export function EventsTable({ events }: EventsTableProps) {
+  const { locale, t } = useLocale();
+
   return (
     <div className="rounded-2xl border border-slate-800/60 bg-slate-900/50 p-5">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-200">Recent Events</h3>
+        <h3 className="text-sm font-semibold text-slate-200">
+          {t('events.title' as never)}
+        </h3>
         <span className="text-[10px] font-mono uppercase tracking-wider text-slate-600">
           Last {events.length}
         </span>
@@ -73,18 +78,24 @@ export function EventsTable({ events }: EventsTableProps) {
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-slate-800/60 text-slate-500">
-              <th className="whitespace-nowrap pb-3 pr-4 font-medium">Time</th>
               <th className="whitespace-nowrap pb-3 pr-4 font-medium">
-                IP Address
+                {t('events.time' as never)}
               </th>
-              <th className="whitespace-nowrap pb-3 pr-4 font-medium">Path</th>
+              <th className="whitespace-nowrap pb-3 pr-4 font-medium">
+                {t('events.ip' as never)}
+              </th>
+              <th className="whitespace-nowrap pb-3 pr-4 font-medium">
+                {t('events.path' as never)}
+              </th>
               <th className="whitespace-nowrap pb-3 pr-4 font-medium text-right">
-                Score
+                {t('events.score' as never)}
               </th>
               <th className="whitespace-nowrap pb-3 pr-4 font-medium">
-                Level
+                {t('events.level' as never)}
               </th>
-              <th className="whitespace-nowrap pb-3 font-medium">Action</th>
+              <th className="whitespace-nowrap pb-3 font-medium">
+                {t('events.action' as never)}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -94,7 +105,7 @@ export function EventsTable({ events }: EventsTableProps) {
                 className="border-b border-slate-800/30 transition-colors hover:bg-slate-800/20"
               >
                 <td className="whitespace-nowrap py-3 pr-4 font-mono text-slate-400">
-                  {formatTimestamp(event.createdAt)}
+                  {formatTimestamp(event.createdAt, locale)}
                 </td>
                 <td className="whitespace-nowrap py-3 pr-4 font-mono text-slate-300">
                   {event.ipAddress}
@@ -145,7 +156,7 @@ export function EventsTable({ events }: EventsTableProps) {
 
         {events.length === 0 && (
           <div className="py-12 text-center text-sm text-slate-600">
-            No events recorded yet
+            {t('dashboard.noEvents' as never)}
           </div>
         )}
       </div>
