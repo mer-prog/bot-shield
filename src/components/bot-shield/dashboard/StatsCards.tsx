@@ -1,6 +1,7 @@
 'use client';
 
 import type { DashboardStats } from '@/lib/bot-shield/types';
+import { useLocale } from '@/lib/locale-context';
 
 interface StatsCardsProps {
   stats: DashboardStats;
@@ -23,32 +24,33 @@ function scoreColor(score: number): { color: string; bg: string } {
 }
 
 export function StatsCards({ stats, blockRate }: StatsCardsProps) {
+  const { t } = useLocale();
   const avgColor = scoreColor(stats.averageRiskScore);
 
   const cards: CardDef[] = [
     {
-      label: 'Total Events (24h)',
+      label: t('stats.totalEvents' as never),
       value: stats.totalEvents.toLocaleString(),
       icon: '📊',
       color: '#06b6d4',
       bg: 'rgba(6,182,212,0.08)',
     },
     {
-      label: 'Blocked',
+      label: t('stats.blocked' as never),
       value: stats.blockedCount.toLocaleString(),
       icon: '🚫',
       color: '#ef4444',
       bg: 'rgba(239,68,68,0.08)',
     },
     {
-      label: 'Block Rate',
+      label: t('stats.blockRate' as never),
       value: `${(blockRate * 100).toFixed(1)}%`,
       icon: '🛡️',
       color: '#f59e0b',
       bg: 'rgba(245,158,11,0.08)',
     },
     {
-      label: 'Avg Risk Score',
+      label: t('stats.avgScore' as never),
       value: String(stats.averageRiskScore),
       icon: '⚡',
       color: avgColor.color,

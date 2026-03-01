@@ -7,9 +7,11 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Demo](https://img.shields.io/badge/Live_Demo-▶-00C853)](#demo)
+[![Demo](https://img.shields.io/badge/Live_Demo-▶-00C853)](https://bot-shield-theta.vercel.app)
 
 > Protects limited-edition product drops from automated scalper bots by analyzing real-time user behavior — mouse movement entropy, keyboard timing variance, dwell time, and more.
+
+**🌐 [Live Demo](https://bot-shield-theta.vercel.app)** | **📖 [日本語仕様書](./README_bot-shield_BOT対策_JP.md)** | **📖 [English Spec](./README_bot-shield_BOT対策_EN.md)**
 
 ---
 

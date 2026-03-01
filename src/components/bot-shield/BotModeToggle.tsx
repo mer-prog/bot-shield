@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { BotSignals, RiskLevel } from '@/lib/bot-shield/types';
 import { BOT_SHIELD_CONFIG } from '@/lib/bot-shield/config';
 import { useBotShield, type UseBotShieldReturn } from '@/hooks/use-bot-shield';
+import { useLocale } from '@/lib/locale-context';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -11,18 +12,7 @@ import { useBotShield, type UseBotShieldReturn } from '@/hooks/use-bot-shield';
 
 const GAUGE_R = 28;
 const GAUGE_C = 2 * Math.PI * GAUGE_R;
-const MAX_CONTRIBUTION = 50; // botdAutomation — 最大寄与
-
-const SIGNAL_LABELS: Record<keyof BotSignals, string> = {
-  botdAutomation: '自動化ツール',
-  turnstileFailed: 'Turnstile',
-  rateLimitExceeded: 'Rate Limit',
-  noMouseMovement: 'マウス操作',
-  rapidPurchases: '連続購入',
-  shortDwellTime: '滞在時間',
-  abnormalKeyboard: 'キーボード',
-  suspiciousUserAgent: 'User-Agent',
-};
+const MAX_CONTRIBUTION = 50; // botdAutomation — max contribution
 
 const LEVEL_CONFIG = {
   low: { label: 'LOW', color: '#06b6d4', bg: 'rgba(6,182,212,0.12)' },
@@ -70,7 +60,6 @@ const ACTION_CONFIG: Record<
 // ---------------------------------------------------------------------------
 
 interface BotModeToggleProps {
-  /** 親がuseBotShieldを呼んでいる場合、そのインスタンスを共有 */
   botShield?: UseBotShieldReturn;
 }
 
@@ -83,6 +72,7 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
   const { signals, riskScore, riskLevel, isReady, simulateBotMode } =
     botShield ?? internal;
 
+  const { t } = useLocale();
   const [expanded, setExpanded] = useState(false);
   const [botMode, setBotMode] = useState(false);
 
@@ -92,13 +82,25 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
 
   // Signal breakdown — sorted by max possible contribution
   const { weights } = BOT_SHIELD_CONFIG.scoring;
+
+  const signalLabelKeys: Record<keyof BotSignals, string> = {
+    botdAutomation: 'signal.botdAutomation',
+    turnstileFailed: 'signal.turnstileFailed',
+    rateLimitExceeded: 'signal.rateLimitExceeded',
+    noMouseMovement: 'signal.noMouseMovement',
+    rapidPurchases: 'signal.rapidPurchases',
+    shortDwellTime: 'signal.shortDwellTime',
+    abnormalKeyboard: 'signal.abnormalKeyboard',
+    suspiciousUserAgent: 'signal.suspiciousUserAgent',
+  };
+
   const breakdown = (Object.keys(weights) as (keyof BotSignals)[])
     .map((key) => {
       const w = weights[key];
       const contrib = Math.round(w.baseScore * w.multiplier);
       return {
         key,
-        label: SIGNAL_LABELS[key],
+        label: t(signalLabelKeys[key] as never),
         contribution: signals[key] ? contrib : 0,
         maxContribution: contrib,
         active: signals[key],
@@ -152,7 +154,7 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
             <div className="flex items-center gap-2">
               <span className="text-base">🤖</span>
               <span className="text-sm font-semibold text-slate-200">
-                BOT Mode
+                {t('toggle.botMode' as never)}
               </span>
             </div>
             <button
@@ -167,7 +169,9 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
             {/* Toggle */}
             <div className="mb-5 flex items-center justify-between">
               <span className="text-xs text-slate-400">
-                {botMode ? 'BOTとして行動中' : '通常モード'}
+                {botMode
+                  ? t('toggle.botActive' as never)
+                  : t('toggle.normalMode' as never)}
               </span>
               <button
                 onClick={toggleBotMode}
@@ -249,7 +253,9 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
                   }}
                 />
                 <span className="text-[9px] font-mono text-slate-600 uppercase">
-                  {isReady ? 'monitoring' : 'initializing'}
+                  {isReady
+                    ? t('toggle.monitoring' as never)
+                    : t('toggle.initializing' as never)}
                 </span>
               </span>
             </div>
@@ -271,7 +277,7 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
             <div className="mb-3 flex items-center gap-2">
               <div className="h-px flex-1 bg-slate-800/60" />
               <span className="text-[9px] font-mono uppercase tracking-wider text-slate-600">
-                Signal Analysis
+                {t('toggle.signalAnalysis' as never)}
               </span>
               <div className="h-px flex-1 bg-slate-800/60" />
             </div>

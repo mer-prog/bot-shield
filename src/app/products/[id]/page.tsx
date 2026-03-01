@@ -7,6 +7,8 @@ import { getProductById } from '@/lib/mock-products';
 import { useBotShield } from '@/hooks/use-bot-shield';
 import { TurnstileWidget } from '@/components/bot-shield/TurnstileWidget';
 import { BotModeToggle } from '@/components/bot-shield/BotModeToggle';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useLocale } from '@/lib/locale-context';
 import type { ActionType, RiskLevel } from '@/lib/bot-shield/types';
 
 // ---------------------------------------------------------------------------
@@ -24,47 +26,49 @@ interface PurchaseResult {
 }
 
 // ---------------------------------------------------------------------------
-// Result display config
+// Result display config (locale-aware)
 // ---------------------------------------------------------------------------
 
-const ACTION_DISPLAY = {
-  allow: {
-    icon: '✓',
-    title: '購入完了',
-    subtitle: 'ご注文を受け付けました。',
-    border: 'border-emerald-500/40',
-    bg: 'bg-emerald-500/5',
-    accent: 'text-emerald-400',
-    barColor: 'bg-emerald-400',
-  },
-  flag: {
-    icon: '⚠',
-    title: '購入完了（レビュー対象）',
-    subtitle: 'ご注文を受け付けました。追加確認が行われる場合があります。',
-    border: 'border-amber-500/40',
-    bg: 'bg-amber-500/5',
-    accent: 'text-amber-400',
-    barColor: 'bg-amber-400',
-  },
-  challenge: {
-    icon: '🔐',
-    title: '追加認証が必要です',
-    subtitle: 'セキュリティチャレンジを完了してください。',
-    border: 'border-orange-500/40',
-    bg: 'bg-orange-500/5',
-    accent: 'text-orange-400',
-    barColor: 'bg-orange-400',
-  },
-  block: {
-    icon: '✗',
-    title: '購入がブロックされました',
-    subtitle: '不審なアクティビティが検出されました。',
-    border: 'border-red-500/40',
-    bg: 'bg-red-500/5',
-    accent: 'text-red-400',
-    barColor: 'bg-red-500',
-  },
-} as const;
+function getActionDisplay(t: (key: never, ...args: never[]) => string) {
+  return {
+    allow: {
+      icon: '✓',
+      title: t('result.allow.title' as never),
+      subtitle: t('result.allow.subtitle' as never),
+      border: 'border-emerald-500/40',
+      bg: 'bg-emerald-500/5',
+      accent: 'text-emerald-400',
+      barColor: 'bg-emerald-400',
+    },
+    flag: {
+      icon: '⚠',
+      title: t('result.flag.title' as never),
+      subtitle: t('result.flag.subtitle' as never),
+      border: 'border-amber-500/40',
+      bg: 'bg-amber-500/5',
+      accent: 'text-amber-400',
+      barColor: 'bg-amber-400',
+    },
+    challenge: {
+      icon: '🔐',
+      title: t('result.challenge.title' as never),
+      subtitle: t('result.challenge.subtitle' as never),
+      border: 'border-orange-500/40',
+      bg: 'bg-orange-500/5',
+      accent: 'text-orange-400',
+      barColor: 'bg-orange-400',
+    },
+    block: {
+      icon: '✗',
+      title: t('result.block.title' as never),
+      subtitle: t('result.block.subtitle' as never),
+      border: 'border-red-500/40',
+      bg: 'bg-red-500/5',
+      accent: 'text-red-400',
+      barColor: 'bg-red-500',
+    },
+  } as const;
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -72,7 +76,8 @@ const ACTION_DISPLAY = {
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
-  const product = getProductById(id);
+  const { locale, t } = useLocale();
+  const product = getProductById(id, locale);
   const botShield = useBotShield();
   const { signals, reportSignals } = botShield;
 
@@ -115,13 +120,13 @@ export default function ProductPage() {
           risk_score: 0,
           risk_level: 'critical',
           event_id: '',
-          message: 'ネットワークエラーが発生しました。',
+          message: t('product.networkError' as never),
         });
       } finally {
         setPurchasing(false);
       }
     },
-    [product, signals, reportSignals],
+    [product, signals, reportSignals, t],
   );
 
   const handleTurnstileSuccess = useCallback(
@@ -139,20 +144,22 @@ export default function ProductPage() {
         <div className="text-center">
           <p className="mb-4 text-6xl">🔍</p>
           <h1 className="mb-2 text-xl font-bold text-slate-200">
-            商品が見つかりません
+            {t('product.notFound' as never)}
           </h1>
           <Link
             href="/"
             className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
           >
-            &larr; トップへ戻る
+            {t('product.backToTop' as never)}
           </Link>
         </div>
       </div>
     );
   }
 
+  const ACTION_DISPLAY = getActionDisplay(t);
   const display = result ? ACTION_DISPLAY[result.action] : null;
+  const stockLabel = locale === 'ja' ? `残り ${product.stock} 点` : `${product.stock} left`;
 
   return (
     <div className="min-h-screen bg-grid-pattern">
@@ -165,19 +172,20 @@ export default function ProductPage() {
               BOT Shield
             </span>
           </Link>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <Link
               href="/"
               className="text-sm font-medium text-slate-400 transition-colors hover:text-cyan-400"
             >
-              &larr; 商品一覧
+              {t('nav.backToList' as never)}
             </Link>
             <Link
               href="/dashboard"
               className="rounded-lg border border-slate-700/60 bg-slate-800/50 px-4 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
             >
-              Dashboard
+              {t('nav.dashboard' as never)}
             </Link>
+            <LanguageSwitcher />
           </div>
         </nav>
       </header>
@@ -211,12 +219,16 @@ export default function ProductPage() {
               <span className="text-4xl font-extrabold text-slate-100">
                 &yen;{product.price.toLocaleString()}
               </span>
-              <span className="text-sm text-slate-500">(税込)</span>
+              <span className="text-sm text-slate-500">
+                {t('product.taxIncluded' as never)}
+              </span>
             </div>
 
             {/* Stock */}
             <div className="mb-8 flex items-center gap-3">
-              <span className="text-sm text-slate-500">在庫状況:</span>
+              <span className="text-sm text-slate-500">
+                {t('product.stockLabel' as never)}
+              </span>
               <span
                 className={`rounded-full px-3 py-1 text-xs font-semibold ${
                   product.stock <= 1
@@ -226,7 +238,7 @@ export default function ProductPage() {
                       : 'bg-emerald-500/15 text-emerald-400'
                 }`}
               >
-                残り {product.stock} 点
+                {stockLabel}
               </span>
             </div>
 
@@ -259,19 +271,17 @@ export default function ProductPage() {
                       className="opacity-75"
                     />
                   </svg>
-                  処理中...
+                  {t('product.purchasing' as never)}
                 </span>
               ) : (
-                '購入する'
+                t('product.purchase' as never)
               )}
             </button>
 
             {/* Info box */}
             <div className="mt-4 rounded-xl border border-slate-800/60 bg-slate-900/40 p-4">
               <p className="text-xs leading-relaxed text-slate-500">
-                🛡️ この購入は BOT Shield の5層防御で保護されています。
-                マウス操作・キーボード入力・滞在時間などの行動データが
-                リアルタイムで分析されます。
+                {t('product.shieldInfo' as never)}
               </p>
             </div>
           </div>
@@ -281,10 +291,10 @@ export default function ProductPage() {
         {showTurnstile && (
           <div className="mt-10 rounded-2xl border border-orange-500/30 bg-orange-500/5 p-8 text-center">
             <p className="mb-4 text-lg font-semibold text-orange-400">
-              🔐 セキュリティチャレンジ
+              {t('challenge.title' as never)}
             </p>
             <p className="mb-6 text-sm text-slate-400">
-              不審なアクティビティが検出されました。以下のチャレンジを完了してください。
+              {t('challenge.description' as never)}
             </p>
             <div className="flex justify-center">
               <TurnstileWidget
