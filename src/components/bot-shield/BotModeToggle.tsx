@@ -183,7 +183,7 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
                 }}
               >
                 <span
-                  className="absolute top-0.5 h-5 w-5 rounded-full transition-all duration-200"
+                  className="absolute left-0 top-0.5 h-5 w-5 rounded-full transition-all duration-200"
                   style={{
                     backgroundColor: botMode ? '#ef4444' : '#64748b',
                     transform: botMode
