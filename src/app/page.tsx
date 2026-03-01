@@ -1,65 +1,152 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { MOCK_PRODUCTS } from '@/lib/mock-products';
+import { BotScoreIndicator } from '@/components/bot-shield/BotScoreIndicator';
+
+function StockBadge({ stock }: { stock: number }) {
+  const color =
+    stock <= 1
+      ? 'bg-red-500/20 text-red-400'
+      : stock <= 3
+        ? 'bg-amber-500/20 text-amber-400'
+        : 'bg-emerald-500/20 text-emerald-400';
+
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${color}`}>
+      残り {stock} 点
+    </span>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-grid-pattern">
+      {/* ─── Header ─── */}
+      <header className="sticky top-0 z-40 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-xl">
+        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="text-xl">🛡️</span>
+            <span className="text-base font-bold tracking-tight text-slate-100">
+              BOT Shield
+            </span>
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link
+              href="/"
+              className="text-sm font-medium text-slate-400 transition-colors hover:text-cyan-400"
+            >
+              Products
+            </Link>
+            <Link
+              href="/dashboard"
+              className="rounded-lg border border-slate-700/60 bg-slate-800/50 px-4 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
+            >
+              Dashboard
+            </Link>
+          </div>
+        </nav>
+      </header>
+
+      {/* ─── Hero ─── */}
+      <section className="relative overflow-hidden">
+        {/* Background glow */}
+        <div className="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-cyan-500/5 blur-3xl" />
+
+        <div className="mx-auto max-w-6xl px-6 pb-16 pt-24 text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-700/50 bg-slate-800/50 px-4 py-1.5 text-sm text-slate-400">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
+            5層防御アクティブ
+          </div>
+
+          <h1 className="mb-4 text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
+            <span className="text-gradient-hero">BOT Shield</span>
+            <br />
+            <span className="text-slate-100">Demo Store</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400">
+            マウス軌跡・キーボードタイミング・滞在時間をリアルタイム分析。
+            <br className="hidden sm:block" />
+            転売BOTから商品を守る多層防御システムのデモンストレーション。
           </p>
+
+          <div className="flex items-center justify-center gap-4">
+            <Link
+              href="/dashboard"
+              className="rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-400"
+            >
+              Dashboard を見る
+            </Link>
+            <a
+              href="#products"
+              className="rounded-xl border border-slate-700/60 px-6 py-3 text-sm font-semibold text-slate-300 transition-colors hover:border-slate-600 hover:text-slate-100"
+            >
+              商品を見る
+            </a>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* ─── Products Grid ─── */}
+      <section id="products" className="mx-auto max-w-6xl px-6 pb-24">
+        <div className="mb-10 flex items-end justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-100">限定商品</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              転売BOTに狙われやすい商品ラインナップ
+            </p>
+          </div>
+          <span className="rounded-lg border border-slate-700/50 bg-slate-800/40 px-3 py-1 text-xs font-mono text-slate-500">
+            {MOCK_PRODUCTS.length} items
+          </span>
         </div>
-      </main>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {MOCK_PRODUCTS.map((product) => (
+            <Link
+              key={product.id}
+              href={`/products/${product.id}`}
+              className="card-hover group rounded-2xl border border-slate-800/60 bg-slate-900/50 overflow-hidden"
+            >
+              {/* Image placeholder */}
+              <div
+                className="relative flex h-48 items-center justify-center"
+                style={{
+                  background: `linear-gradient(135deg, ${product.gradientFrom}, ${product.gradientTo})`,
+                }}
+              >
+                <span className="text-6xl opacity-80 transition-transform group-hover:scale-110">
+                  {product.emoji}
+                </span>
+                <div className="absolute right-3 top-3">
+                  <StockBadge stock={product.stock} />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-900/80 to-transparent" />
+              </div>
+
+              {/* Info */}
+              <div className="p-5">
+                <p className="mb-1 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+                  {product.category}
+                </p>
+                <h3 className="mb-3 text-sm font-semibold leading-snug text-slate-200 group-hover:text-cyan-400 transition-colors">
+                  {product.name}
+                </h3>
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-bold text-slate-100">
+                    &yen;{product.price.toLocaleString()}
+                  </span>
+                  <span className="rounded-lg bg-slate-800/60 px-3 py-1 text-xs font-medium text-cyan-400 opacity-0 transition-opacity group-hover:opacity-100">
+                    詳細を見る &rarr;
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── Bot Score Indicator (floating) ─── */}
+      <BotScoreIndicator />
     </div>
   );
 }
