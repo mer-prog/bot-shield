@@ -6,7 +6,7 @@ import { useState, useCallback } from 'react';
 import { getProductById } from '@/lib/mock-products';
 import { useBotShield } from '@/hooks/use-bot-shield';
 import { TurnstileWidget } from '@/components/bot-shield/TurnstileWidget';
-import { BotScoreIndicator } from '@/components/bot-shield/BotScoreIndicator';
+import { BotModeToggle } from '@/components/bot-shield/BotModeToggle';
 import type { ActionType, RiskLevel } from '@/lib/bot-shield/types';
 
 // ---------------------------------------------------------------------------
@@ -73,7 +73,8 @@ const ACTION_DISPLAY = {
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
   const product = getProductById(id);
-  const { signals, reportSignals } = useBotShield();
+  const botShield = useBotShield();
+  const { signals, reportSignals } = botShield;
 
   const [purchasing, setPurchasing] = useState(false);
   const [result, setResult] = useState<PurchaseResult | null>(null);
@@ -356,7 +357,7 @@ export default function ProductPage() {
         )}
       </main>
 
-      <BotScoreIndicator />
+      <BotModeToggle botShield={botShield} />
     </div>
   );
 }

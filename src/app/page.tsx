@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { MOCK_PRODUCTS } from '@/lib/mock-products';
-import { BotScoreIndicator } from '@/components/bot-shield/BotScoreIndicator';
+import { BotModeToggle } from '@/components/bot-shield/BotModeToggle';
 
 function StockBadge({ stock }: { stock: number }) {
   const color =
@@ -145,8 +145,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── Bot Score Indicator (floating) ─── */}
-      <BotScoreIndicator />
+      {/* ─── Bot Mode Toggle (floating) ─── */}
+      <BotModeToggle />
     </div>
   );
 }
