@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { DashboardStats, TimeSeriesDataPoint } from '@/lib/bot-shield/types';
-import { getEventStats } from '@/lib/db/bot-events';
+import type {
+  DashboardStats,
+  TimeSeriesDataPoint,
+  RiskLevel,
+  ActionType,
+} from '@/lib/bot-shield/types';
+import { getEventStats, getRecentEvents } from '@/lib/db/bot-events';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -12,11 +17,22 @@ interface TopRiskIp {
   avgRiskScore: number;
 }
 
+export interface EventSummary {
+  id: string;
+  ipAddress: string;
+  path: string;
+  riskScore: number;
+  riskLevel: RiskLevel;
+  action: ActionType;
+  createdAt: string;
+}
+
 interface StatsResponse {
   stats: DashboardStats;
   timeSeries: TimeSeriesDataPoint[];
   blockRate: number;
   topRiskIps: TopRiskIp[];
+  recentEvents: EventSummary[];
 }
 
 type TimeRange = '1h' | '24h' | '7d' | '30d';
@@ -25,6 +41,71 @@ const VALID_RANGES = new Set<string>(['1h', '24h', '7d', '30d']);
 // ---------------------------------------------------------------------------
 // Mock data — DB 未接続かつイベント 0 件のときに返す
 // ---------------------------------------------------------------------------
+
+const MOCK_IPS = [
+  '203.0.113.42',
+  '198.51.100.17',
+  '192.0.2.88',
+  '10.0.0.55',
+  '172.16.0.201',
+  '203.0.113.99',
+  '198.51.100.33',
+  '192.0.2.12',
+];
+
+const MOCK_PATHS = [
+  '/products/nike-air-max-95-neon',
+  '/products/ps5-pro',
+  '/products/metal-build-strike-freedom',
+  '/products/supreme-box-logo-hoodie',
+  '/products/pokemon-card-151-box',
+  '/api/bot-shield/purchase',
+];
+
+function scoreToLevel(score: number): RiskLevel {
+  if (score <= 39) return 'low';
+  if (score <= 59) return 'medium';
+  if (score <= 79) return 'high';
+  return 'critical';
+}
+
+function levelToAction(level: RiskLevel): ActionType {
+  switch (level) {
+    case 'low':
+      return 'allow';
+    case 'medium':
+      return 'flag';
+    case 'high':
+      return 'challenge';
+    case 'critical':
+      return 'block';
+  }
+}
+
+function generateMockEvents(): EventSummary[] {
+  const now = Date.now();
+  return Array.from({ length: 20 }, () => {
+    const score =
+      Math.random() < 0.55
+        ? Math.floor(Math.random() * 40)
+        : Math.floor(Math.random() * 61) + 40;
+    const level = scoreToLevel(score);
+    return {
+      id: crypto.randomUUID(),
+      ipAddress: MOCK_IPS[Math.floor(Math.random() * MOCK_IPS.length)],
+      path: MOCK_PATHS[Math.floor(Math.random() * MOCK_PATHS.length)],
+      riskScore: score,
+      riskLevel: level,
+      action: levelToAction(level),
+      createdAt: new Date(
+        now - Math.floor(Math.random() * 86_400_000),
+      ).toISOString(),
+    };
+  }).sort(
+    (a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+}
 
 function generateMockData(): StatsResponse {
   const now = new Date();
@@ -66,7 +147,10 @@ function generateMockData(): StatsResponse {
       topSignals: [
         { signal: 'noMouseMovement', count: Math.floor(totalEvents * 0.25) },
         { signal: 'shortDwellTime', count: Math.floor(totalEvents * 0.2) },
-        { signal: 'suspiciousUserAgent', count: Math.floor(totalEvents * 0.15) },
+        {
+          signal: 'suspiciousUserAgent',
+          count: Math.floor(totalEvents * 0.15),
+        },
         { signal: 'abnormalKeyboard', count: Math.floor(totalEvents * 0.1) },
         { signal: 'botdAutomation', count: Math.floor(totalEvents * 0.08) },
       ],
@@ -78,6 +162,7 @@ function generateMockData(): StatsResponse {
       { ip: '198.51.100.17', eventCount: 15, avgRiskScore: 65 },
       { ip: '192.0.2.88', eventCount: 9, avgRiskScore: 58 },
     ],
+    recentEvents: generateMockEvents(),
   };
 }
 
@@ -103,11 +188,23 @@ export async function GET(request: NextRequest) {
   const blockRate =
     stats.totalEvents > 0 ? stats.blockedCount / stats.totalEvents : 0;
 
+  const events = await getRecentEvents(20);
+  const recentEvents: EventSummary[] = events.map((e) => ({
+    id: e.id,
+    ipAddress: e.ipAddress,
+    path: e.path,
+    riskScore: e.riskScore,
+    riskLevel: e.riskLevel,
+    action: e.action,
+    createdAt: e.createdAt.toISOString(),
+  }));
+
   const response: StatsResponse = {
     stats,
     timeSeries,
     blockRate,
-    topRiskIps: [], // TODO: IP 別集計は getEventStats 拡張時に実装
+    topRiskIps: [],
+    recentEvents,
   };
 
   return NextResponse.json(response);
