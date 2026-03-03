@@ -5,7 +5,7 @@ import {
   useContext,
   useState,
   useCallback,
-  useEffect,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react';
 import type { Locale, TranslationKey } from './i18n';
@@ -22,25 +22,47 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 const STORAGE_KEY = 'bot-shield-locale';
 
-function getInitialLocale(): Locale {
-  if (typeof window === 'undefined') return 'ja';
+// ---------------------------------------------------------------------------
+// External store for locale (localStorage-backed)
+// ---------------------------------------------------------------------------
+
+let listeners: Array<() => void> = [];
+
+function emitChange() {
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
+function subscribe(listener: () => void): () => void {
+  listeners = [...listeners, listener];
+  return () => {
+    listeners = listeners.filter((l) => l !== listener);
+  };
+}
+
+function getSnapshot(): Locale {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored === 'ja' || stored === 'en') return stored;
   const browserLang = navigator.language;
   return browserLang.startsWith('ja') ? 'ja' : 'en';
 }
 
-export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('ja');
+function getServerSnapshot(): Locale {
+  return 'ja';
+}
 
-  useEffect(() => {
-    setLocaleState(getInitialLocale());
-  }, []);
+// ---------------------------------------------------------------------------
+// Provider
+// ---------------------------------------------------------------------------
+
+export function LocaleProvider({ children }: { children: ReactNode }) {
+  const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const setLocale = useCallback((l: Locale) => {
-    setLocaleState(l);
     localStorage.setItem(STORAGE_KEY, l);
     document.documentElement.lang = l;
+    emitChange();
   }, []);
 
   const t = useCallback(
