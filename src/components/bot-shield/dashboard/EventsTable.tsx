@@ -61,16 +61,17 @@ interface EventsTableProps {
 // ---------------------------------------------------------------------------
 
 export function EventsTable({ events }: EventsTableProps) {
-  const { locale, t } = useLocale();
+  const { locale, t, tf } = useLocale();
+  const lastFn = tf('events.last');
 
   return (
     <div className="rounded-2xl border border-slate-800/60 bg-slate-900/50 p-5">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-200">
-          {t('events.title' as never)}
+          {t('events.title')}
         </h3>
         <span className="text-[10px] font-mono uppercase tracking-wider text-slate-600">
-          Last {events.length}
+          {lastFn(events.length as never)}
         </span>
       </div>
 
@@ -79,22 +80,22 @@ export function EventsTable({ events }: EventsTableProps) {
           <thead>
             <tr className="border-b border-slate-800/60 text-slate-500">
               <th className="whitespace-nowrap pb-3 pr-4 font-medium">
-                {t('events.time' as never)}
+                {t('events.time')}
               </th>
               <th className="whitespace-nowrap pb-3 pr-4 font-medium">
-                {t('events.ip' as never)}
+                {t('events.ip')}
               </th>
               <th className="whitespace-nowrap pb-3 pr-4 font-medium">
-                {t('events.path' as never)}
+                {t('events.path')}
               </th>
               <th className="whitespace-nowrap pb-3 pr-4 font-medium text-right">
-                {t('events.score' as never)}
+                {t('events.score')}
               </th>
               <th className="whitespace-nowrap pb-3 pr-4 font-medium">
-                {t('events.level' as never)}
+                {t('events.level')}
               </th>
               <th className="whitespace-nowrap pb-3 font-medium">
-                {t('events.action' as never)}
+                {t('events.action')}
               </th>
             </tr>
           </thead>
@@ -156,7 +157,7 @@ export function EventsTable({ events }: EventsTableProps) {
 
         {events.length === 0 && (
           <div className="py-12 text-center text-sm text-slate-600">
-            {t('dashboard.noEvents' as never)}
+            {t('dashboard.noEvents')}
           </div>
         )}
       </div>

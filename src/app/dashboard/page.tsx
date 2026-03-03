@@ -24,10 +24,10 @@ export default function DashboardPage() {
               href="/"
               className="text-sm font-medium text-slate-400 transition-colors hover:text-cyan-400"
             >
-              {t('nav.store' as never)}
+              {t('nav.store')}
             </Link>
             <span className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-4 py-1.5 text-sm font-medium text-cyan-400">
-              {t('nav.dashboard' as never)}
+              {t('nav.dashboard')}
             </span>
             <LanguageSwitcher />
           </div>

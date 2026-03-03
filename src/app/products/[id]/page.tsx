@@ -10,6 +10,7 @@ import { BotModeToggle } from '@/components/bot-shield/BotModeToggle';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLocale } from '@/lib/locale-context';
 import type { ActionType, RiskLevel } from '@/lib/bot-shield/types';
+import type { TranslationKey } from '@/lib/i18n';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -29,12 +30,12 @@ interface PurchaseResult {
 // Result display config (locale-aware)
 // ---------------------------------------------------------------------------
 
-function getActionDisplay(t: (key: never, ...args: never[]) => string) {
+function getActionDisplay(t: (key: TranslationKey) => string) {
   return {
     allow: {
       icon: '✓',
-      title: t('result.allow.title' as never),
-      subtitle: t('result.allow.subtitle' as never),
+      title: t('result.allow.title'),
+      subtitle: t('result.allow.subtitle'),
       border: 'border-emerald-500/40',
       bg: 'bg-emerald-500/5',
       accent: 'text-emerald-400',
@@ -42,8 +43,8 @@ function getActionDisplay(t: (key: never, ...args: never[]) => string) {
     },
     flag: {
       icon: '⚠',
-      title: t('result.flag.title' as never),
-      subtitle: t('result.flag.subtitle' as never),
+      title: t('result.flag.title'),
+      subtitle: t('result.flag.subtitle'),
       border: 'border-amber-500/40',
       bg: 'bg-amber-500/5',
       accent: 'text-amber-400',
@@ -51,8 +52,8 @@ function getActionDisplay(t: (key: never, ...args: never[]) => string) {
     },
     challenge: {
       icon: '🔐',
-      title: t('result.challenge.title' as never),
-      subtitle: t('result.challenge.subtitle' as never),
+      title: t('result.challenge.title'),
+      subtitle: t('result.challenge.subtitle'),
       border: 'border-orange-500/40',
       bg: 'bg-orange-500/5',
       accent: 'text-orange-400',
@@ -60,8 +61,8 @@ function getActionDisplay(t: (key: never, ...args: never[]) => string) {
     },
     block: {
       icon: '✗',
-      title: t('result.block.title' as never),
-      subtitle: t('result.block.subtitle' as never),
+      title: t('result.block.title'),
+      subtitle: t('result.block.subtitle'),
       border: 'border-red-500/40',
       bg: 'bg-red-500/5',
       accent: 'text-red-400',
@@ -120,7 +121,7 @@ export default function ProductPage() {
           risk_score: 0,
           risk_level: 'critical',
           event_id: '',
-          message: t('product.networkError' as never),
+          message: t('product.networkError'),
         });
       } finally {
         setPurchasing(false);
@@ -144,13 +145,13 @@ export default function ProductPage() {
         <div className="text-center">
           <p className="mb-4 text-6xl">🔍</p>
           <h1 className="mb-2 text-xl font-bold text-slate-200">
-            {t('product.notFound' as never)}
+            {t('product.notFound')}
           </h1>
           <Link
             href="/"
             className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
           >
-            {t('product.backToTop' as never)}
+            {t('product.backToTop')}
           </Link>
         </div>
       </div>
@@ -177,13 +178,13 @@ export default function ProductPage() {
               href="/"
               className="text-sm font-medium text-slate-400 transition-colors hover:text-cyan-400"
             >
-              {t('nav.backToList' as never)}
+              {t('nav.backToList')}
             </Link>
             <Link
               href="/dashboard"
               className="rounded-lg border border-slate-700/60 bg-slate-800/50 px-4 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
             >
-              {t('nav.dashboard' as never)}
+              {t('nav.dashboard')}
             </Link>
             <LanguageSwitcher />
           </div>
@@ -220,14 +221,14 @@ export default function ProductPage() {
                 &yen;{product.price.toLocaleString()}
               </span>
               <span className="text-sm text-slate-500">
-                {t('product.taxIncluded' as never)}
+                {t('product.taxIncluded')}
               </span>
             </div>
 
             {/* Stock */}
             <div className="mb-8 flex items-center gap-3">
               <span className="text-sm text-slate-500">
-                {t('product.stockLabel' as never)}
+                {t('product.stockLabel')}
               </span>
               <span
                 className={`rounded-full px-3 py-1 text-xs font-semibold ${
@@ -254,6 +255,7 @@ export default function ProductPage() {
                     className="h-5 w-5 animate-spin"
                     viewBox="0 0 24 24"
                     fill="none"
+                    aria-hidden="true"
                   >
                     <circle
                       cx="12"
@@ -271,17 +273,17 @@ export default function ProductPage() {
                       className="opacity-75"
                     />
                   </svg>
-                  {t('product.purchasing' as never)}
+                  {t('product.purchasing')}
                 </span>
               ) : (
-                t('product.purchase' as never)
+                t('product.purchase')
               )}
             </button>
 
             {/* Info box */}
             <div className="mt-4 rounded-xl border border-slate-800/60 bg-slate-900/40 p-4">
               <p className="text-xs leading-relaxed text-slate-500">
-                {t('product.shieldInfo' as never)}
+                {t('product.shieldInfo')}
               </p>
             </div>
           </div>
@@ -291,10 +293,10 @@ export default function ProductPage() {
         {showTurnstile && (
           <div className="mt-10 rounded-2xl border border-orange-500/30 bg-orange-500/5 p-8 text-center">
             <p className="mb-4 text-lg font-semibold text-orange-400">
-              {t('challenge.title' as never)}
+              {t('challenge.title')}
             </p>
             <p className="mb-6 text-sm text-slate-400">
-              {t('challenge.description' as never)}
+              {t('challenge.description')}
             </p>
             <div className="flex justify-center">
               <TurnstileWidget
@@ -327,11 +329,11 @@ export default function ProductPage() {
             <div className="mt-6 rounded-xl border border-slate-700/30 bg-slate-900/50 p-5">
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-sm font-medium text-slate-300">
-                  Risk Score
+                  {t('result.riskScore')}
                 </span>
                 <span className={`text-2xl font-bold font-mono ${display.accent}`}>
                   {result.risk_score}
-                  <span className="text-sm text-slate-600"> / 100</span>
+                  <span className="text-sm text-slate-600"> {t('result.scoreOf')}</span>
                 </span>
               </div>
 
@@ -344,23 +346,23 @@ export default function ProductPage() {
               </div>
 
               <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-                <span>ALLOW &lt; 40</span>
-                <span>FLAG &lt; 60</span>
-                <span>CHALLENGE &lt; 80</span>
-                <span>BLOCK</span>
+                <span>{t('result.thresholdAllow')}</span>
+                <span>{t('result.thresholdFlag')}</span>
+                <span>{t('result.thresholdChallenge')}</span>
+                <span>{t('result.thresholdBlock')}</span>
               </div>
             </div>
 
             {/* Metadata */}
             <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-500">
               <span className="rounded-lg bg-slate-800/40 px-2.5 py-1 font-mono">
-                Event: {result.event_id.slice(0, 8)}...
+                {t('result.eventPrefix')} {result.event_id.slice(0, 8)}...
               </span>
               <span className="rounded-lg bg-slate-800/40 px-2.5 py-1 font-mono uppercase">
-                Action: {result.action}
+                {t('result.actionPrefix')} {result.action}
               </span>
               <span className="rounded-lg bg-slate-800/40 px-2.5 py-1 font-mono uppercase">
-                Level: {result.risk_level}
+                {t('result.levelPrefix')} {result.risk_level}
               </span>
             </div>
           </div>

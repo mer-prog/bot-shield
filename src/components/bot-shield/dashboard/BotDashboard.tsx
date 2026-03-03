@@ -35,7 +35,7 @@ const REFRESH_INTERVAL_MS = 30_000;
 // ---------------------------------------------------------------------------
 
 export function BotDashboard() {
-  const { locale, t } = useLocale();
+  const { locale, t, tf } = useLocale();
   const [data, setData] = useState<StatsData | null>(null);
   const [range, setRange] = useState<TimeRange>('24h');
   const [loading, setLoading] = useState(true);
@@ -49,8 +49,8 @@ export function BotDashboard() {
       const json = (await res.json()) as StatsData;
       setData(json);
       setLastUpdated(new Date());
-    } catch (err) {
-      console.error('[BotDashboard] fetch failed:', err);
+    } catch {
+      // Silently fail — dashboard shows stale data or loading state
     } finally {
       setLoading(false);
     }
@@ -95,6 +95,7 @@ export function BotDashboard() {
   if (!data) return null;
 
   const timeLocale = locale === 'ja' ? 'ja-JP' : 'en-US';
+  const updatedFn = tf('dashboard.updated');
 
   return (
     <div className="space-y-6">
@@ -102,12 +103,12 @@ export function BotDashboard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <h2 className="text-xl font-bold text-slate-100">
-            {t('dashboard.title' as never)}
+            {t('dashboard.title')}
           </h2>
           <span className="flex items-center gap-1.5 rounded-full border border-slate-700/50 bg-slate-800/50 px-2.5 py-0.5">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse-dot" aria-hidden="true" />
             <span className="text-[10px] font-mono text-slate-500 uppercase">
-              Live
+              {t('dashboard.live')}
             </span>
           </span>
         </div>
@@ -116,22 +117,24 @@ export function BotDashboard() {
           {/* Last updated */}
           {lastUpdated && (
             <span className="text-[10px] font-mono text-slate-600">
-              Updated{' '}
-              {lastUpdated.toLocaleTimeString(timeLocale, {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false,
-              })}
+              {updatedFn(
+                lastUpdated.toLocaleTimeString(timeLocale, {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                  hour12: false,
+                }) as never,
+              )}
             </span>
           )}
 
           {/* Time range selector */}
-          <div className="flex rounded-lg border border-slate-700/50 bg-slate-800/40 p-0.5">
+          <div className="flex rounded-lg border border-slate-700/50 bg-slate-800/40 p-0.5" role="group" aria-label="Time range">
             {RANGES.map((r) => (
               <button
                 key={r.value}
                 onClick={() => handleRangeChange(r.value)}
+                aria-pressed={range === r.value}
                 className={`rounded-md px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
                   range === r.value
                     ? 'bg-cyan-500/20 text-cyan-400'

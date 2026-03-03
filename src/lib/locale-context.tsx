@@ -14,7 +14,7 @@ import { t as translate, getTranslation } from './i18n';
 interface LocaleContextValue {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: TranslationKey, ...args: never[]) => string;
+  t: (key: TranslationKey) => string;
   tf: (key: TranslationKey) => (...args: never[]) => string;
 }
 
@@ -66,7 +66,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const t = useCallback(
-    (key: TranslationKey, ...args: never[]) => translate(locale, key, ...args),
+    (key: TranslationKey) => translate(locale, key),
     [locale],
   );
 

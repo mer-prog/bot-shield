@@ -5,6 +5,7 @@ import type { BotSignals, RiskLevel } from '@/lib/bot-shield/types';
 import { BOT_SHIELD_CONFIG } from '@/lib/bot-shield/config';
 import { useBotShield, type UseBotShieldReturn } from '@/hooks/use-bot-shield';
 import { useLocale } from '@/lib/locale-context';
+import type { TranslationKey } from '@/lib/i18n';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -12,7 +13,6 @@ import { useLocale } from '@/lib/locale-context';
 
 const GAUGE_R = 28;
 const GAUGE_C = 2 * Math.PI * GAUGE_R;
-const MAX_CONTRIBUTION = 50; // botdAutomation — max contribution
 
 const LEVEL_CONFIG = {
   low: { label: 'LOW', color: '#06b6d4', bg: 'rgba(6,182,212,0.12)' },
@@ -55,6 +55,17 @@ const ACTION_CONFIG: Record<
   },
 };
 
+const SIGNAL_LABEL_KEYS: Record<keyof BotSignals, TranslationKey> = {
+  botdAutomation: 'signal.botdAutomation',
+  turnstileFailed: 'signal.turnstileFailed',
+  rateLimitExceeded: 'signal.rateLimitExceeded',
+  noMouseMovement: 'signal.noMouseMovement',
+  rapidPurchases: 'signal.rapidPurchases',
+  shortDwellTime: 'signal.shortDwellTime',
+  abnormalKeyboard: 'signal.abnormalKeyboard',
+  suspiciousUserAgent: 'signal.suspiciousUserAgent',
+};
+
 // ---------------------------------------------------------------------------
 // Props
 // ---------------------------------------------------------------------------
@@ -82,17 +93,9 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
 
   // Signal breakdown — sorted by max possible contribution
   const { weights } = BOT_SHIELD_CONFIG.scoring;
-
-  const signalLabelKeys: Record<keyof BotSignals, string> = {
-    botdAutomation: 'signal.botdAutomation',
-    turnstileFailed: 'signal.turnstileFailed',
-    rateLimitExceeded: 'signal.rateLimitExceeded',
-    noMouseMovement: 'signal.noMouseMovement',
-    rapidPurchases: 'signal.rapidPurchases',
-    shortDwellTime: 'signal.shortDwellTime',
-    abnormalKeyboard: 'signal.abnormalKeyboard',
-    suspiciousUserAgent: 'signal.suspiciousUserAgent',
-  };
+  const maxContribution = Math.max(
+    ...Object.values(weights).map((w) => Math.round(w.baseScore * w.multiplier)),
+  );
 
   const breakdown = (Object.keys(weights) as (keyof BotSignals)[])
     .map((key) => {
@@ -100,7 +103,7 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
       const contrib = Math.round(w.baseScore * w.multiplier);
       return {
         key,
-        label: t(signalLabelKeys[key] as never),
+        label: t(SIGNAL_LABEL_KEYS[key]),
         contribution: signals[key] ? contrib : 0,
         maxContribution: contrib,
         active: signals[key],
@@ -120,12 +123,13 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
       {!expanded && (
         <button
           onClick={() => setExpanded(true)}
+          aria-label={t('toggle.botMode')}
           className="flex items-center gap-2.5 rounded-full border border-slate-700/60 bg-slate-900/90 px-4 py-2.5 backdrop-blur-xl transition-all hover:border-slate-600 cursor-pointer"
           style={{
             boxShadow: `0 0 24px ${level.bg}`,
           }}
         >
-          <span className="text-base">🤖</span>
+          <span className="text-base" aria-hidden="true">🤖</span>
           <span
             className="text-sm font-bold font-mono"
             style={{ color: level.color }}
@@ -135,6 +139,7 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
           <span
             className="inline-block h-2 w-2 rounded-full animate-pulse-dot"
             style={{ backgroundColor: level.color }}
+            aria-hidden="true"
           />
         </button>
       )}
@@ -143,6 +148,8 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
       {expanded && (
         <div
           className="w-72 rounded-2xl border border-slate-700/50 bg-slate-900/95 backdrop-blur-xl"
+          role="dialog"
+          aria-label={t('toggle.botMode')}
           style={{
             boxShadow: botMode
               ? '0 0 40px rgba(239,68,68,0.15), 0 20px 50px rgba(0,0,0,0.5)'
@@ -152,13 +159,14 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-800/60 px-5 py-3">
             <div className="flex items-center gap-2">
-              <span className="text-base">🤖</span>
+              <span className="text-base" aria-hidden="true">🤖</span>
               <span className="text-sm font-semibold text-slate-200">
-                {t('toggle.botMode' as never)}
+                {t('toggle.botMode')}
               </span>
             </div>
             <button
               onClick={() => setExpanded(false)}
+              aria-label="Close"
               className="flex h-6 w-6 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-800 hover:text-slate-300 cursor-pointer"
             >
               &times;
@@ -170,11 +178,14 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
             <div className="mb-5 flex items-center justify-between">
               <span className="text-xs text-slate-400">
                 {botMode
-                  ? t('toggle.botActive' as never)
-                  : t('toggle.normalMode' as never)}
+                  ? t('toggle.botActive')
+                  : t('toggle.normalMode')}
               </span>
               <button
                 onClick={toggleBotMode}
+                role="switch"
+                aria-checked={botMode}
+                aria-label={t('toggle.botMode')}
                 className="relative h-6 w-11 rounded-full transition-colors cursor-pointer"
                 style={{
                   backgroundColor: botMode
@@ -202,6 +213,7 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
                   height="112"
                   viewBox="0 0 64 64"
                   className="absolute"
+                  aria-hidden="true"
                 >
                   <circle
                     cx="32"
@@ -251,11 +263,12 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
                   style={{
                     backgroundColor: isReady ? '#10b981' : '#94a3b8',
                   }}
+                  aria-hidden="true"
                 />
                 <span className="text-[9px] font-mono text-slate-600 uppercase">
                   {isReady
-                    ? t('toggle.monitoring' as never)
-                    : t('toggle.initializing' as never)}
+                    ? t('toggle.monitoring')
+                    : t('toggle.initializing')}
                 </span>
               </span>
             </div>
@@ -277,7 +290,7 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
             <div className="mb-3 flex items-center gap-2">
               <div className="h-px flex-1 bg-slate-800/60" />
               <span className="text-[9px] font-mono uppercase tracking-wider text-slate-600">
-                {t('toggle.signalAnalysis' as never)}
+                {t('toggle.signalAnalysis')}
               </span>
               <div className="h-px flex-1 bg-slate-800/60" />
             </div>
@@ -299,7 +312,7 @@ export function BotModeToggle({ botShield }: BotModeToggleProps) {
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
-                        width: `${(s.contribution / MAX_CONTRIBUTION) * 100}%`,
+                        width: `${(s.contribution / maxContribution) * 100}%`,
                         backgroundColor: s.active
                           ? level.color
                           : 'transparent',
