@@ -29,28 +29,28 @@ export function StatsCards({ stats, blockRate }: StatsCardsProps) {
 
   const cards: CardDef[] = [
     {
-      label: t('stats.totalEvents' as never),
+      label: t('stats.totalEvents'),
       value: stats.totalEvents.toLocaleString(),
       icon: '📊',
       color: '#06b6d4',
       bg: 'rgba(6,182,212,0.08)',
     },
     {
-      label: t('stats.blocked' as never),
+      label: t('stats.blocked'),
       value: stats.blockedCount.toLocaleString(),
       icon: '🚫',
       color: '#ef4444',
       bg: 'rgba(239,68,68,0.08)',
     },
     {
-      label: t('stats.blockRate' as never),
+      label: t('stats.blockRate'),
       value: `${(blockRate * 100).toFixed(1)}%`,
       icon: '🛡️',
       color: '#f59e0b',
       bg: 'rgba(245,158,11,0.08)',
     },
     {
-      label: t('stats.avgScore' as never),
+      label: t('stats.avgScore'),
       value: String(stats.averageRiskScore),
       icon: '⚡',
       color: avgColor.color,

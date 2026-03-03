@@ -1,5 +1,9 @@
 export type Locale = 'ja' | 'en';
 
+// ---------------------------------------------------------------------------
+// Translation dictionaries (ja / en)
+// ---------------------------------------------------------------------------
+
 const translations = {
   ja: {
     // Layout
@@ -24,6 +28,7 @@ const translations = {
     'products.subtitle': '転売BOTに狙われやすい商品ラインナップ',
     'products.stock': (n: number) => `残り ${n} 点`,
     'products.viewDetail': '詳細を見る \u2192',
+    'products.itemCount': (n: number) => `${n} 件`,
 
     // Product detail
     'product.taxIncluded': '(税込)',
@@ -46,6 +51,15 @@ const translations = {
     'result.challenge.subtitle': 'セキュリティチャレンジを完了してください。',
     'result.block.title': '購入がブロックされました',
     'result.block.subtitle': '不審なアクティビティが検出されました。',
+    'result.riskScore': 'リスクスコア',
+    'result.scoreOf': '/ 100',
+    'result.thresholdAllow': 'ALLOW < 40',
+    'result.thresholdFlag': 'FLAG < 60',
+    'result.thresholdChallenge': 'CHALLENGE < 80',
+    'result.thresholdBlock': 'BLOCK',
+    'result.eventPrefix': 'Event:',
+    'result.actionPrefix': 'Action:',
+    'result.levelPrefix': 'Level:',
 
     // Turnstile challenge
     'challenge.title': '🔐 セキュリティチャレンジ',
@@ -72,24 +86,35 @@ const translations = {
 
     // Dashboard
     'dashboard.title': 'Security Operations Center',
-    'dashboard.updated': (time: string) => `Updated ${time}`,
-    'dashboard.noEvents': 'No events recorded yet',
+    'dashboard.updated': (time: string) => `更新 ${time}`,
+    'dashboard.noEvents': 'イベントはまだ記録されていません',
+    'dashboard.live': 'Live',
 
     // Stats cards
-    'stats.totalEvents': 'Total Events (24h)',
-    'stats.blocked': 'Blocked',
-    'stats.blockRate': 'Block Rate',
-    'stats.avgScore': 'Avg Risk Score',
+    'stats.totalEvents': 'イベント総数 (24h)',
+    'stats.blocked': 'ブロック数',
+    'stats.blockRate': 'ブロック率',
+    'stats.avgScore': '平均リスクスコア',
 
     // Events table
-    'events.title': 'Recent Events',
-    'events.last': (n: number) => `Last ${n}`,
-    'events.time': 'Time',
-    'events.ip': 'IP Address',
-    'events.path': 'Path',
-    'events.score': 'Score',
-    'events.level': 'Level',
-    'events.action': 'Action',
+    'events.title': '最近のイベント',
+    'events.last': (n: number) => `直近 ${n} 件`,
+    'events.time': '時刻',
+    'events.ip': 'IPアドレス',
+    'events.path': 'パス',
+    'events.score': 'スコア',
+    'events.level': 'レベル',
+    'events.action': 'アクション',
+
+    // Chart
+    'chart.threatTimeline': '脅威タイムライン',
+    'chart.hourly': '時間別',
+    'chart.riskDistribution': 'リスク分布',
+    'chart.events': 'イベント',
+    'chart.allowed': '許可',
+    'chart.flagged': 'フラグ',
+    'chart.challenged': 'チャレンジ',
+    'chart.blocked': 'ブロック',
 
     // Language switcher
     'lang.switch': 'EN',
@@ -119,6 +144,7 @@ const translations = {
     'products.subtitle': 'Product lineup frequently targeted by scalper bots',
     'products.stock': (n: number) => `${n} left`,
     'products.viewDetail': 'View details \u2192',
+    'products.itemCount': (n: number) => `${n} items`,
 
     // Product detail
     'product.taxIncluded': '(tax incl.)',
@@ -141,6 +167,15 @@ const translations = {
     'result.challenge.subtitle': 'Please complete the security challenge.',
     'result.block.title': 'Purchase Blocked',
     'result.block.subtitle': 'Suspicious activity has been detected.',
+    'result.riskScore': 'Risk Score',
+    'result.scoreOf': '/ 100',
+    'result.thresholdAllow': 'ALLOW < 40',
+    'result.thresholdFlag': 'FLAG < 60',
+    'result.thresholdChallenge': 'CHALLENGE < 80',
+    'result.thresholdBlock': 'BLOCK',
+    'result.eventPrefix': 'Event:',
+    'result.actionPrefix': 'Action:',
+    'result.levelPrefix': 'Level:',
 
     // Turnstile challenge
     'challenge.title': '🔐 Security Challenge',
@@ -169,6 +204,7 @@ const translations = {
     'dashboard.title': 'Security Operations Center',
     'dashboard.updated': (time: string) => `Updated ${time}`,
     'dashboard.noEvents': 'No events recorded yet',
+    'dashboard.live': 'Live',
 
     // Stats cards
     'stats.totalEvents': 'Total Events (24h)',
@@ -186,23 +222,49 @@ const translations = {
     'events.level': 'Level',
     'events.action': 'Action',
 
+    // Chart
+    'chart.threatTimeline': 'Threat Timeline',
+    'chart.hourly': 'Hourly',
+    'chart.riskDistribution': 'Risk Distribution',
+    'chart.events': 'events',
+    'chart.allowed': 'Allowed',
+    'chart.flagged': 'Flagged',
+    'chart.challenged': 'Challenged',
+    'chart.blocked': 'Blocked',
+
     // Language switcher
     'lang.switch': 'JA',
   },
 } as const;
 
-type TranslationValue = string | ((...args: never[]) => string);
+// ---------------------------------------------------------------------------
+// Types — extract key union from the translation map
+// ---------------------------------------------------------------------------
+
 type TranslationMap = typeof translations.ja;
+
+/** All valid translation keys */
 export type TranslationKey = keyof TranslationMap;
+
+/** Keys whose value is a plain string */
+export type StringTranslationKey = {
+  [K in TranslationKey]: TranslationMap[K] extends string ? K : never;
+}[TranslationKey];
+
+type TranslationValue = string | ((...args: never[]) => string);
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
 
 export function getTranslation(locale: Locale, key: TranslationKey): TranslationValue {
   return translations[locale][key];
 }
 
-export function t(locale: Locale, key: TranslationKey, ...args: never[]): string {
+export function t(locale: Locale, key: TranslationKey): string {
   const value = translations[locale][key];
   if (typeof value === 'function') {
-    return (value as (...a: never[]) => string)(...args);
+    return String(value);
   }
-  return value as string;
+  return value;
 }
