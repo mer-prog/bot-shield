@@ -7,7 +7,7 @@ import { getProductById } from '@/lib/mock-products';
 import { useBotShield } from '@/hooks/use-bot-shield';
 import { TurnstileWidget } from '@/components/bot-shield/TurnstileWidget';
 import { BotModeToggle } from '@/components/bot-shield/BotModeToggle';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { AppHeader } from '@/components/AppHeader';
 import { useLocale } from '@/lib/locale-context';
 import type { ActionType, RiskLevel } from '@/lib/bot-shield/types';
 import type { TranslationKey } from '@/lib/i18n';
@@ -164,32 +164,12 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen bg-grid-pattern">
-      {/* ─── Header ─── */}
-      <header className="sticky top-0 z-40 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-xl">
-        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="text-xl">🛡️</span>
-            <span className="text-base font-bold tracking-tight text-slate-100">
-              BOT Shield
-            </span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="text-sm font-medium text-slate-400 transition-colors hover:text-cyan-400"
-            >
-              {t('nav.backToList')}
-            </Link>
-            <Link
-              href="/dashboard"
-              className="rounded-lg border border-slate-700/60 bg-slate-800/50 px-4 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
-            >
-              {t('nav.dashboard')}
-            </Link>
-            <LanguageSwitcher />
-          </div>
-        </nav>
-      </header>
+      <AppHeader
+        navItems={[
+          { href: '/', labelKey: 'nav.backToList' },
+          { href: '/dashboard', labelKey: 'nav.dashboard' },
+        ]}
+      />
 
       {/* ─── Product Detail ─── */}
       <main className="mx-auto max-w-6xl px-6 py-12">

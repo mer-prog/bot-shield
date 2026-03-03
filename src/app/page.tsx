@@ -3,9 +3,8 @@
 import Link from 'next/link';
 import { getLocalizedProducts } from '@/lib/mock-products';
 import { BotModeToggle } from '@/components/bot-shield/BotModeToggle';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { AppHeader } from '@/components/AppHeader';
 import { useLocale } from '@/lib/locale-context';
-import type { TranslationKey } from '@/lib/i18n';
 
 function StockBadge({ stock, locale }: { stock: number; locale: 'ja' | 'en' }) {
   const color =
@@ -31,32 +30,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-grid-pattern">
-      {/* ─── Header ─── */}
-      <header className="sticky top-0 z-40 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-xl">
-        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="text-xl">🛡️</span>
-            <span className="text-base font-bold tracking-tight text-slate-100">
-              BOT Shield
-            </span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="text-sm font-medium text-slate-400 transition-colors hover:text-cyan-400"
-            >
-              {t('nav.products')}
-            </Link>
-            <Link
-              href="/dashboard"
-              className="rounded-lg border border-slate-700/60 bg-slate-800/50 px-4 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
-            >
-              {t('nav.dashboard')}
-            </Link>
-            <LanguageSwitcher />
-          </div>
-        </nav>
-      </header>
+      <AppHeader
+        navItems={[
+          { href: '/', labelKey: 'nav.products' },
+          { href: '/dashboard', labelKey: 'nav.dashboard' },
+        ]}
+      />
 
       {/* ─── Hero ─── */}
       <section className="relative overflow-hidden">
